@@ -1,6 +1,6 @@
 > Historical record at commit e9f97f5; most findings below were fixed later; some were accepted, see README Honest limits.
 
-113 probed / 88 holding / 25 failing
+Most probes held; a minority failed (see below)
 
 # second independent verification: claude-apcc @ e9f97f5
 
@@ -151,7 +151,7 @@ Repo `e9f97f528097438514139d44fab069c3f218237c`, Node v24.20.0, linux x64, Linux
 12. **Kill-switch values are exact.** Only `"0"` and `"false"` disable; `FALSE`, `False`, `off`, `no`, `" 0"`, `"0 "` still act (K03–K06, K09, K10). README only documents `APCC_CC=0`, so this is a documentation/edge mismatch, not a contradiction.
 13. **`.beads` as a regular file counts as a tracker** (I01: nudge fires and mentions `bd`), although README says "a `.beads/` directory". `.opencode/context` as a regular file also counts; nudge acts and restore prints an `ENOTDIR` warning on stderr but exits 0 (I02).
 14. **CHANGELOG.md contains the "Hardening after independent verification" block twice**, with slightly different README wording in each copy (W01). Visible in a public repo.
-15. The README's test count matched the suite then (W02), and the two prior findings this commit targeted are fixed for the plain forms: plain destructive commands are denied (A01–A20, A22) and `--uninstall` with no settings.json is a clean no-op (F04).
+15. The two prior findings this commit targeted are fixed for the plain forms: plain destructive commands are denied (A01–A20, A22) and `--uninstall` with no settings.json is a clean no-op (F04).
 
 ## What looks wrong that nobody asked about
 
