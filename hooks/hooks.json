@@ -1,0 +1,11 @@
+{
+  "description": "apcc: persist -> gate -> restore (the host compacts)",
+  "hooks": {
+    "UserPromptSubmit": [{ "hooks": [{ "type": "command", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/apcc.mjs", "nudge"], "timeout": 10 }] }],
+    "PostToolUse":      [{ "hooks": [{ "type": "command", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/apcc.mjs", "nudge"], "timeout": 10 }] }],
+    "Stop":             [{ "hooks": [{ "type": "command", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/apcc.mjs", "stop"], "timeout": 10 }] }],
+    "PreCompact":       [{ "hooks": [{ "type": "command", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/apcc.mjs", "precompact"], "timeout": 10 }] }],
+    "SessionStart":     [{ "hooks": [{ "type": "command", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/apcc.mjs", "restore"], "timeout": 10 }] }],
+    "PreToolUse":       [{ "hooks": [{ "type": "command", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/apcc.mjs", "gate"], "timeout": 10 }] }]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "apcc",
+  "owner": { "name": "9thDuck", "url": "https://github.com/9thDuck" },
+  "description": "apcc: persist, gate, restore hooks for Claude Code.",
+  "plugins": [
+    {
+      "name": "apcc",
+      "source": "./",
+      "description": "Keeps Claude Code from losing work and your instructions when the context compacts.",
+      "category": "productivity"
+    }
+  ]
+}

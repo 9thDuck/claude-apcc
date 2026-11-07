@@ -1,0 +1,16 @@
+{
+  "name": "claude-apcc",
+  "version": "0.2.1",
+  "description": "Persist, gate, restore: keeps Claude Code from losing work and your instructions when the context compacts.",
+  "type": "module",
+  "license": "PolyForm-Shield-1.0.0",
+  "author": "9thDuck",
+  "repository": { "type": "git", "url": "git+https://github.com/9thDuck/claude-apcc.git" },
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "test": "node scripts/test.mjs",
+    "verify": "node scripts/verify.mjs",
+    "install-hooks": "node scripts/install.mjs"
+  },
+  "files": ["hooks/apcc.mjs", "hooks/hooks.json", ".claude-plugin/", "scripts/", "skills/", "README.md", "LICENSE"]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "apcc",
+  "displayName": "apcc: persist, gate, restore",
+  "version": "0.2.1",
+  "description": "Keeps Claude Code from losing work and your instructions when the context compacts.",
+  "author": { "name": "9thDuck", "url": "https://github.com/9thDuck" },
+  "homepage": "https://github.com/9thDuck/claude-apcc",
+  "repository": "https://github.com/9thDuck/claude-apcc",
+  "license": "PolyForm-Shield-1.0.0",
+  "keywords": ["compaction", "context", "hooks", "persist", "beads"]
+}

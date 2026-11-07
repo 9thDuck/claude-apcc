@@ -1,0 +1,30 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm test
+      - run: npm run verify
+      - name: installer round trip
+        run: |
+          export CLAUDE_CONFIG_DIR="$(mktemp -d)"
+          node scripts/install.mjs && node scripts/install.mjs && node scripts/install.mjs --uninstall
+  plugin-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Pinned so a CLI update cannot change this gate underneath us; bump deliberately.
+      - run: npx -y @anthropic-ai/claude-code@2.1.295 plugin validate . --strict
+      - name: plugin hooks run from a space + symlink path
+        run: node scripts/verify.mjs --plugin
