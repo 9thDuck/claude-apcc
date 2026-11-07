@@ -2,9 +2,14 @@
 
 **Persist → gate → restore.** A set of [Claude Code hooks](https://docs.claude.com/en/docs/claude-code/hooks) that stop long sessions from silently losing work, decisions and your own instructions when the context window compacts.
 
-Zero dependencies. One file (`hooks/apcc.mjs`), Node 18+. Ships as a Claude Code **plugin** and as a **script installer** for managed or older installs.
+One file (`hooks/apcc.mjs`). Ships as a Claude Code **plugin** and as a **script installer** for managed or older installs.
 
 Use at your own risk and judgement; the author is not liable for any loss or damage ([details](#use-at-your-own-risk)).
+
+## Prerequisites
+
+- Node 18 or newer on your PATH. Without it the hooks fail and apcc does nothing.
+- [Beads](https://github.com/steveyegge/beads) (`bd`) installed, and `bd init` run in each project you want apcc in. apcc saves your state as beads notes.
 
 ## Install
 
@@ -25,13 +30,7 @@ node ~/claude-apcc/scripts/install.mjs            # all projects (~/.claude)
 node ~/claude-apcc/scripts/install.mjs --project  # run inside a project: only that project
 ```
 
-Then tell apcc where to persist, in each project you want it in:
-
-```bash
-mkdir -p .opencode/context   # or use beads (.beads/)
-```
-
-Without `.opencode/context/` or `.beads/`, apcc stays mostly idle: one startup line and one late nudge, and it saves only your own messages. Set `autoCompactWindow` (for example `180000`) in your Claude Code settings so apcc knows when compaction is near; the script installer sets it for you.
+Then set `autoCompactWindow` (for example `180000`) in your Claude Code settings so apcc knows when compaction is near; the script installer sets it for you. In a project without `.beads/`, apcc stays mostly idle: one startup line and one late nudge, and it saves only your own messages.
 
 Details, updating, uninstalling, flags and the plugin-versus-script rules: [docs/install.md](docs/install.md).
 
@@ -70,9 +69,9 @@ Per-hook detail is in [docs/reference.md](docs/reference.md). To see one session
 
 The rest (`APCC_MARKER_TOOLS`, `APCC_CC_REMOTE_ONLY`, the window variables) are in [docs/reference.md](docs/reference.md#configuration-environment).
 
-## Beads is optional
+## Beads
 
-apcc works without any tracker. With [beads](https://github.com/steveyegge/beads) usable, the directives use `bd note` and `bd create` and recovery re-reads beads first; without it, everything goes through `.opencode/context/session-notes.md` and `index.md`. More in [docs/reference.md](docs/reference.md#beads-is-optional).
+With beads installed, the directives use `bd note` and `bd create`, and recovery re-reads beads first. A project without `.beads/` can use `.opencode/context/` instead (`mkdir -p .opencode/context`); that fallback is described in [docs/reference.md](docs/reference.md#beads-is-optional).
 
 ## Uninstall
 
@@ -87,7 +86,7 @@ For a script install: `node scripts/install.mjs --uninstall` (add `--project` fo
 
 - The persist step is an instruction to the model, and a model can ignore it. In a live Haiku trial it did, and apcc then reported "not done" after compaction and pointed to the recovery steps. The gate and the recovery contract make ignoring it costly and recoverable, not impossible.
 - The gate matches command text. It stops accidents, not a determined attacker, and is not a sandbox.
-- It only acts fully in a project with `.opencode/context/` or `.beads/`.
+- It only acts fully in a project with `.beads/` (or the `.opencode/context/` fallback).
 - Exec-form plugin hooks need a recent Claude Code, and organisations that set `allowManagedHooksOnly` may block them; the script install covers both.
 - Developed and tested on Linux with synthetic hook payloads and a few short live Haiku sessions; not yet checked against every Claude Code release.
 
