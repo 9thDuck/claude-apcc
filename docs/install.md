@@ -61,7 +61,7 @@ Claude Code does not dedupe a plugin's copy of a handler against a script instal
 mkdir -p .opencode/context   # or use beads
 ```
 
-apcc only acts fully in a project that has somewhere to persist to: `.opencode/context/` or a `.beads/` directory. With neither it does two things only: a startup line saying apcc is idle and how to switch it on, and one late nudge per context (at the usual persist threshold) asking the model to create `.opencode/context`, add it to `.gitignore` and persist. It writes nothing into the project, and never gates; your messages are still copied verbatim to the state dir at compaction and pointed to afterwards. `mkdir -p .opencode/context` is the opt-in; `APCC_CC_UNTRACKED=0` restores total silence.
+apcc only acts fully in a project that has somewhere to persist to: `.opencode/context/` or a `.beads/` directory. With neither it does one thing only: a startup line saying apcc is idle and how to switch it on. It writes nothing into the project, and never gates; your messages are still copied verbatim to the state dir at compaction and pointed to afterwards. `mkdir -p .opencode/context` is the opt-in; `APCC_CC_UNTRACKED=0` restores total silence.
 
 ## Uninstall
 

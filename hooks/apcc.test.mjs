@@ -169,22 +169,14 @@ test("e2e: subagent calls, untracked projects, kill switch and missing session a
   assert.equal(handle("gate", u.input({ hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: { command: "ls" } }), u.env, 0), null) // never gated
 })
 
-test("e2e: untracked project gets one startup hint and one late nudge per context, and writes nothing into the project", () => {
+test("e2e: untracked project gets a startup hint, never a nudge, and writes nothing into the project", () => {
   const u = rig({ tokens: 20_000, tracked: false })
   assert.match(handle("restore", u.input({ source: "startup" }), u.env, 0).systemMessage, /mkdir -p \.opencode\/context/)
   assert.equal(handle("restore", u.input({ source: "resume" }), u.env, 0), null)
-  assert.equal(handle("nudge", u.input(), u.env, 1), null) // below threshold
   u.setTokens(130_000)
-  const n = handle("nudge", u.input(), u.env, 2)
-  assert.match(n.hookSpecificOutput.additionalContext, /nowhere to persist/)
-  assert.match(n.hookSpecificOutput.additionalContext, /mkdir -p \.opencode\/context/)
-  assert.equal(handle("nudge", u.input(), u.env, 3), null) // once per context
-  u.setTokens(20_000)
-  handle("nudge", u.input(), u.env, 4) // meter drop = new epoch
-  u.setTokens(130_000)
-  assert.ok(handle("nudge", u.input(), u.env, 5)) // nudged again after compaction
+  assert.equal(handle("nudge", u.input(), u.env, 2), null) // far past the threshold, still silent
+  assert.equal(handle("nudge", u.input({ agent_id: "sub" }), u.env, 3), null)
   assert.equal(fs.existsSync(path.join(u.proj, ".opencode")), false)
-  assert.equal(handle("nudge", u.input({ agent_id: "sub" }), u.env, 6), null)
 })
 
 test("e2e: compact restore reports the honest status and re-arms the next epoch", () => {

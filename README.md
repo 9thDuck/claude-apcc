@@ -30,7 +30,7 @@ node ~/claude-apcc/scripts/install.mjs            # all projects (~/.claude)
 node ~/claude-apcc/scripts/install.mjs --project  # run inside a project: only that project
 ```
 
-Then set `autoCompactWindow` (for example `180000`) in your Claude Code settings so apcc knows when compaction is near; the script installer sets it for you. In a project without `.beads/`, apcc stays mostly idle: one startup line and one late nudge, and it saves only your own messages.
+Then set `autoCompactWindow` (for example `180000`) in your Claude Code settings so apcc knows when compaction is near; the script installer sets it for you. In a project without `.beads/`, apcc stays mostly idle: one startup line, and it saves only your own messages.
 
 Details, updating, uninstalling, flags and the plugin-versus-script rules: [docs/install.md](docs/install.md).
 

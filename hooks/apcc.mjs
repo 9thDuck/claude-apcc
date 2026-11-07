@@ -12,7 +12,7 @@
 //             tools until a persist is recorded. Never blocks Read, Grep, Glob, TaskOutput, Skill,
 //             AskUserQuestion, TodoWrite, ToolSearch, ExitPlanMode, KillShell, TaskStop, plain
 //             pwd/ls/cat, or the persist-dir setup.
-//   untracked projects (no .opencode/context/ or .beads/) get a startup hint and one late nudge, never a gate;
+//   untracked projects (no .opencode/context/ or .beads/) get a startup hint only, never a nudge or a gate;
 //             their user words are still saved at compaction and pointed to on restore.
 //   precompact(PreCompact) record the honest persist status and copy the user's words to the state dir.
 //             NEVER blocks compaction (a hold-and-spawn gate wedged sessions in the field).
@@ -904,23 +904,12 @@ const out = (obj) => process.stdout.write(JSON.stringify(obj))
 
 // ---- untracked project: no persist destination yet ----
 // A project with neither `.opencode/context/` nor `.beads/` used to get total silence, so a model
-// in a fresh repo lost its state to compaction without ever being asked to save it. Two small
-// exceptions keep the opt-in honest: one startup line saying how to switch apcc on, and one late
-// nudge (once per context) that asks the model to create the directory and persist. Nothing is
-// written into the project here; the model does it. The user's words are the exception that costs nothing:
+// in a fresh repo lost its state to compaction without ever being asked to save it. One small
+// exception keeps the opt-in honest: one startup line saying how to switch apcc on. Nothing is
+// written into the project and the model is never asked to create anything. The user's words are the exception that costs nothing:
 // they are captured at PreCompact and pointed to on restore, in the state dir. APCC_CC_UNTRACKED=0 restores total silence.
 export const UNTRACKED_HINT =
   "apcc: this project has no .opencode/context/ or .beads/, so no work state is saved before compaction and the gate is off. Your own messages are still copied verbatim at compaction (to apcc's state dir, not the project) and pointed to afterwards. Run `mkdir -p .opencode/context` to switch full persistence on."
-export function untrackedNudgeText({ tokens, threshold }) {
-  return [
-    `[apcc] Context is ~${k(tokens)} tokens (persist threshold ${k(threshold)}) and this project has nowhere to persist to, so a host compaction would lose unsaved state.`,
-    "Set it up, then persist (each as its own command):",
-    "1. `mkdir -p .opencode/context`",
-    "2. `echo '.opencode/' >> .gitignore`",
-    "3. write in-flight state (what you are doing, decisions, exact next action) to `.opencode/context/session-notes.md`, then append one line to `.opencode/context/index.md` LAST.",
-    "From here apcc tracks this project and will remind you again if needed.",
-  ].join("\n")
-}
 // Save the user's words verbatim before the summary replaces them. They go to the state dir, not the project.
 function saveUserWords(input, proj, env) {
   try {
@@ -957,28 +946,7 @@ function untrackedHandle(event, input, env, proj, now) {
     if (input.source === "clear" && !userWords) return null
     return { hookSpecificOutput: { hookEventName: "SessionStart", additionalContext: recoveryText({ source: input.source, st: freshSession(now), indexTail: "", tokensBefore: 0, userWords, beads: false, untracked: true, skill: skillName(env) }) } }
   }
-  if (event !== "nudge") return null
-  if (!input.transcript_path || !fs.existsSync(input.transcript_path)) return null
-  const tokens = lastMainContextTokens(readTail(input.transcript_path))
-  const file = stateFile(proj, env)
-  const settings = readSettings(env, proj)
-  const threshold = resolveThreshold(env, settings)
-  // A compaction shows up as the meter falling well below where the nudge fired: re-arm for the next context.
-  const prior = loadState(file).sessions[input.session_id]?.untrackedNudgeTokens ?? 0
-  const rearm = prior > 0 && tokens < prior * 0.6
-  if (!rearm && (threshold <= 0 || tokens < threshold)) return null
-  return withLock(file, () => {
-    const state = loadState(file)
-    const st = state.sessions[input.session_id] ?? freshSession(now)
-    if (rearm) st.untrackedNudgeTokens = 0
-    const fire = threshold > 0 && tokens >= threshold && !(st.untrackedNudgeTokens > 0)
-    if (fire) st.untrackedNudgeTokens = tokens
-    if (!rearm && !fire) return null
-    st.updatedAt = now
-    state.sessions[input.session_id] = st
-    saveState(file, state, now, input.session_id)
-    return fire ? { hookSpecificOutput: { hookEventName: input.hook_event_name || "UserPromptSubmit", additionalContext: untrackedNudgeText({ tokens, threshold }) } } : null
-  })
+  return null // no late nudge: without .beads/ (or .opencode/context/) apcc only copies your words and says so at startup
 }
 
 export function handle(event, input, env = process.env, now = Date.now()) {
@@ -990,7 +958,7 @@ export function handle(event, input, env = process.env, now = Date.now()) {
   // stop, precompact and restore cannot fire twice. Tell the user once per session, at startup.
   // A `--project` install lives under the project's .claude, so the project dir is part of the check.
   const proj = projectDir(input, env)
-  // Only act where persistence has somewhere to go: an untracked project only gets the hint and one late nudge,
+  // Only act where persistence has somewhere to go: an untracked project only gets the startup hint,
   // including the stand-down notice and its state write.
   if (!input.session_id) return null
   if (!isTracked(proj)) return untrackedHandle(event, input, env, proj, now)
