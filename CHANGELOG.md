@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Projects without `.beads/` or `.opencode/context/` no longer get the late "set up .opencode/context and persist" nudge. They get the startup line and the verbatim copy of your messages only; apcc never asks the model to create anything.
+
 The public repository starts at 0.2.1. Entries below it describe earlier, unpublished history.
 
 ## 0.2.1 (2026-11-07)
@@ -8,7 +12,7 @@ The public repository starts at 0.2.1. Entries below it describe earlier, unpubl
 
 ## 0.2.0 (2026-11-06)
 
-- Untracked projects (no `.opencode/context/` or `.beads/`) are no longer fully silent: one startup line says how to switch apcc on, and one late nudge per context asks the model to create `.opencode/context` and persist. Nothing is written into the project and there is no gate; your messages are still copied verbatim to apcc's state dir at compaction and pointed to on restore. `APCC_CC_UNTRACKED=0` restores silence.
+- Untracked projects (no `.opencode/context/` or `.beads/`) are no longer fully silent: one startup line says how to switch apcc on. Nothing is written into the project and there is no gate; your messages are still copied verbatim to apcc's state dir at compaction and pointed to on restore. `APCC_CC_UNTRACKED=0` restores silence.
 - Audit fixes: the gate no longer deadlocks in project paths with a space, non-ASCII characters or `+`; a `PERSISTED: n units` is verified only by a persist write apcc saw (a Write or Edit under the persist dirs, a Bash `echo`/`printf`/heredoc/brace-group redirected into them, a python or node writer, a `bd note`); a write just before the first nudge counts, a delta nudge needs its own write after it; a bare claim, an earlier cycle's write, or another command's output redirected into the dir is reported as unverified and does not release the gate, and the deny text says how to fix it; a `PERSISTED:` line in a subagent's reply is ignored; the destructive-command check skips backticks that quoting or a heredoc body makes plain text, so a note that mentions `npm install` is not refused (its quote reading is simpler than bash's; see Honest limits); a write followed by a read-back (`tail`, `head`, `cat file`) still counts; the not-backed text clears after a later real persist or a new cycle; a subagent write from before the main thread's first token reading counts as early; the `..` traversal check applies to redirect targets and path words, not prose; the post-nudge grace is counted in tool calls, not tokens; the plugin stands down only when the script install's wired hook file exists, and warns once when it does not; the armed gate lets `pwd`, `ls`, `cat`, `mkdir -p` of the persist dirs, the skill's `.gitignore` setup, `KillShell` and `TaskStop` through (`Agent` and `WebFetch` stay blocked).
 - `/clear` restores only the words saved at the last compaction, offered for context when exactly one session in the project was active in the last 15 minutes; messages typed since that compaction are not in it.
 - Found in a live Haiku trial: the nudge now gives the exact `.gitignore` command the gate accepts (a compound command was refused); the compaction point never prints as a negative number on small windows; the pitch says the host compacts and apcc persists, gates and restores (hooks cannot run `/compact`). Live trials confirmed PreCompact and restore after auto and manual compaction.
