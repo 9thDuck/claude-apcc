@@ -6,6 +6,10 @@
 
 The public repository starts at 0.2.1. Entries below it describe earlier, unpublished history.
 
+## Unreleased
+
+- The script installer now refuses to install when `bd` (beads) is not on PATH and changes nothing; `--force` overrides, `--uninstall` and `--help` are unaffected. The plugin install cannot check prerequisites, so the README lists them.
+
 ## 0.2.1 (2026-11-07)
 
 - Licensed under PolyForm Shield 1.0.0: free to use and modify, including at work, but not to offer a competing product or service. README and installer output now say plainly that apcc is used at your own risk and the author is not liable for any loss or damage.

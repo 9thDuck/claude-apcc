@@ -9,7 +9,7 @@ Use at your own risk and judgement; the author is not liable for any loss or dam
 ## Prerequisites
 
 - Node 18 or newer on your PATH. Without it the hooks fail and apcc does nothing.
-- [Beads](https://github.com/steveyegge/beads) (`bd`) installed, and `bd init` run in each project you want apcc in. apcc saves your state as beads notes.
+- [Beads](https://github.com/steveyegge/beads) (`bd`) installed, and `bd init` run in each project you want apcc in. apcc saves your state as beads notes. The script installer (below) refuses to run if `bd` is not on PATH; pass `--force` to install anyway. The plugin install cannot check this: Claude Code has no install-time check for plugins.
 
 ## Install
 

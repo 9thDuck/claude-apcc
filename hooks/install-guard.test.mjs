@@ -9,6 +9,10 @@ import { spawnSync } from "node:child_process"
 import { fileURLToPath } from "node:url"
 import { scriptInstallPresent } from "./apcc.mjs"
 
+// The installer refuses without `bd` on PATH, so the tests put a stub first on PATH.
+const stubBin = fs.mkdtempSync(path.join(os.tmpdir(), "apcc-stub-bd-"))
+fs.writeFileSync(path.join(stubBin, "bd"), "#!/bin/sh\n", { mode: 0o755 })
+const withBd = { PATH: stubBin + path.delimiter + process.env.PATH }
 const install = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "scripts", "install.mjs")
 
 // installed_plugins.json records installs as `name@marketplace`; the real file nests them under
@@ -24,13 +28,13 @@ function cfg(body) {
 
 const run = (dir, ...args) =>
   spawnSync(process.execPath, [install, ...args], {
-    env: { ...process.env, CLAUDE_CONFIG_DIR: dir, HOME: path.dirname(dir) },
+    env: { ...process.env, ...withBd, CLAUDE_CONFIG_DIR: dir, HOME: path.dirname(dir) },
     encoding: "utf8",
   })
 
 const runProject = (dir, cwd, ...args) =>
   spawnSync(process.execPath, [install, "--project", ...args], {
-    env: { ...process.env, CLAUDE_CONFIG_DIR: dir, HOME: path.dirname(dir) },
+    env: { ...process.env, ...withBd, CLAUDE_CONFIG_DIR: dir, HOME: path.dirname(dir) },
     cwd,
     encoding: "utf8",
   })
@@ -159,4 +163,19 @@ test("--help and -h print usage to stdout, exit 0 and install nothing", () => {
     assert.equal(fs.existsSync(path.join(c.dir, "settings.json")), false)
     assert.equal(fs.existsSync(path.join(c.dir, "hooks")), false)
   }
+})
+
+test("the installer refuses without bd on PATH, installs nothing, and --force overrides", () => {
+  const c = cfg()
+  const nodeOnly = fs.mkdtempSync(path.join(os.tmpdir(), "apcc-nodeonly-"))
+  fs.symlinkSync(process.execPath, path.join(nodeOnly, "node"))
+  const noBd = { ...process.env, PATH: nodeOnly, CLAUDE_CONFIG_DIR: c.dir, HOME: path.dirname(c.dir) }
+  const go = (...a) => spawnSync(process.execPath, [install, ...a], { env: noBd, encoding: "utf8" })
+  const r = go()
+  assert.equal(r.status, 1, r.stdout + r.stderr)
+  assert.match(r.stderr, /`bd` \(beads\) is not on PATH/)
+  assert.equal(fs.existsSync(path.join(c.dir, "settings.json")), false)
+  assert.equal(go("--uninstall").status, 0, "--uninstall never needs bd")
+  assert.equal(go("--force").status, 0, "--force installs anyway")
+  assert.equal(fs.existsSync(path.join(c.dir, "settings.json")), true)
 })

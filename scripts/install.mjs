@@ -7,7 +7,7 @@
 //
 // --project installs into ./.claude (this repo only); default is ~/.claude (all projects).
 // CLAUDE_CONFIG_DIR is honoured for the user-level install.
-// --force installs even when the apcc plugin is already installed (the two would double-fire).
+// --force installs even when the apcc plugin is already installed (the two would double-fire) or `bd` is not on PATH.
 //
 // It also ships skills/persisting-context/SKILL.md. The installed copy carries an ownership
 // marker as the first body line (after the frontmatter, which must stay first); a skill without
@@ -18,7 +18,7 @@ import os from "node:os"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { spawnSync } from "node:child_process"
-import { EVENTS } from "../hooks/apcc.mjs"
+import { EVENTS, bdOnPath } from "../hooks/apcc.mjs"
 
 const MARK = "claude-apcc" // appears in every command we write, so we can find and replace our own entries
 const here = path.dirname(fileURLToPath(import.meta.url))
@@ -39,7 +39,7 @@ Options:
   --project         install into ./.claude instead of ~/.claude
   --dry-run         show what would change, write nothing
   --uninstall       remove the apcc hooks and skill copy
-  --force           install even if the apcc plugin is installed
+  --force           install even if the apcc plugin is installed or bd (beads) is not on PATH
   --window <tokens> set autoCompactWindow (default 180000)
   -h, --help        show this help`)
   process.exit(0)
@@ -133,6 +133,10 @@ function pluginInstalled() {
 }
 if (pluginInstalled() && !uninstall && !flag("--force")) {
   console.error("[install] apcc is installed as a plugin; the script install would double-fire. Use the plugin, or pass --force.")
+  process.exit(1)
+}
+if (!uninstall && !flag("--force") && !bdOnPath()) {
+  console.error("[install] `bd` (beads) is not on PATH. apcc saves your state as beads notes, so install beads first (https://github.com/steveyegge/beads), or pass --force to install anyway. Nothing was changed.")
   process.exit(1)
 }
 const act = (m, fn) => {
