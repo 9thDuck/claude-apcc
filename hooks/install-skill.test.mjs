@@ -18,6 +18,10 @@ const MARKER_RE = /^<!-- installed by apcc [^>]+ -->$/m
 
 const bodyOf = (text) => text.replace(/^---\n[\s\S]*?\n---\n/, "").trimStart()
 
+// The installer refuses without `bd` on PATH, so the tests put a stub first on PATH.
+const stubBin = fs.mkdtempSync(path.join(os.tmpdir(), "apcc-stub-bd-"))
+fs.writeFileSync(path.join(stubBin, "bd"), "#!/bin/sh\n", { mode: 0o755 })
+
 function cfg() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "apcc-install-skill-"))
   const dir = path.join(root, "cfg")
@@ -27,7 +31,7 @@ function cfg() {
 
 function run(dir, args = [], opts = {}) {
   return spawnSync(process.execPath, [install, ...args], {
-    env: { ...process.env, CLAUDE_CONFIG_DIR: dir, HOME: path.dirname(dir), ...opts.env },
+    env: { ...process.env, PATH: stubBin + path.delimiter + process.env.PATH, CLAUDE_CONFIG_DIR: dir, HOME: path.dirname(dir), ...opts.env },
     cwd: opts.cwd,
     encoding: "utf8",
   })

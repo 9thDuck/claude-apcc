@@ -16,6 +16,9 @@ jobs:
       - name: installer round trip
         run: |
           export CLAUDE_CONFIG_DIR="$(mktemp -d)"
+          # the installer needs `bd` on PATH; a stub is enough here
+          mkdir -p "$RUNNER_TEMP/stubbin" && printf '#!/bin/sh\n' > "$RUNNER_TEMP/stubbin/bd" && chmod +x "$RUNNER_TEMP/stubbin/bd"
+          export PATH="$RUNNER_TEMP/stubbin:$PATH"
           node scripts/install.mjs && node scripts/install.mjs && node scripts/install.mjs --uninstall
   plugin-validate:
     runs-on: ubuntu-latest

@@ -47,7 +47,7 @@ cd /path/to/your/project
 node ~/claude-apcc/scripts/install.mjs --project  # only this project (./.claude)
 ```
 
-Flags: `--window 180000` (autoCompactWindow if you have none), `--dry-run`, `--uninstall`, `--force` (install even though the plugin is present). It is idempotent, only touches its own hook entries, keeps your other hooks and settings, and refuses to overwrite a `settings.json` it cannot parse (it saves a backup copy and exits). It also copies the persist skill to `<claude-dir>/skills/persisting-context/`, with an ownership marker (`<!-- installed by apcc <version> -->`) as the first line after the frontmatter. It never overwrites a skill without that marker, and `--uninstall` removes only its own copy. Restart Claude Code sessions afterwards.
+Flags: `--window 180000` (autoCompactWindow if you have none), `--dry-run`, `--uninstall`, `--force` (install even though the plugin is present, or `bd` is not on PATH; without `bd` the installer refuses and changes nothing, and `--uninstall` and `--help` never need it). It is idempotent, only touches its own hook entries, keeps your other hooks and settings, and refuses to overwrite a `settings.json` it cannot parse (it saves a backup copy and exits). It also copies the persist skill to `<claude-dir>/skills/persisting-context/`, with an ownership marker (`<!-- installed by apcc <version> -->`) as the first line after the frontmatter. It never overwrites a skill without that marker, and `--uninstall` removes only its own copy. Restart Claude Code sessions afterwards.
 
 The installer sets `autoCompactWindow` unless you already have one, so the window hint is a plugin-only message.
 
