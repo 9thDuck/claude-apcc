@@ -1,5 +1,7 @@
 # Changelog
 
+The public repository starts at 0.2.1. Entries below it describe earlier, unpublished history.
+
 ## 0.2.1 (2026-11-07)
 
 - Licensed under PolyForm Shield 1.0.0: free to use and modify, including at work, but not to offer a competing product or service. README and installer output now say plainly that apcc is used at your own risk and the author is not liable for any loss or damage.
@@ -12,7 +14,7 @@
 - Found in a live Haiku trial: the nudge now gives the exact `.gitignore` command the gate accepts (a compound command was refused); the compaction point never prints as a negative number on small windows; the pitch says the host compacts and apcc persists, gates and restores (hooks cannot run `/compact`). Live trials confirmed PreCompact and restore after auto and manual compaction.
 - Restore no longer says "nothing was persisted" when an earlier persist exists but later work is unsaved. Live trial 3: six auto-compactions, ten persisted units, task completed intact.
 - Opus review fixes: after `/clear` only a single recently active words file is offered, as context only (never another session's or an old one's instructions as open work); reading the index no longer counts as a persist (only appending does); the gate no longer blocks `Skill`, `AskUserQuestion`, `TodoWrite`, `ToolSearch`, `ExitPlanMode`; repeated persists back off the next nudge; on small windows the nudge comes at least 5k before the host's compaction point.
-- Ships as a Claude Code plugin and marketplace: `/plugin marketplace add 9thDuck/claude-apcc`, then `/plugin install apcc@apcc` (one step on Claude Code 2.1.275+: `/plugin install apcc --marketplace 9thDuck/claude-apcc`). The script installer stays as the fallback for managed or older CLIs.
+- Ships as a Claude Code plugin and marketplace: `/plugin marketplace add 9thDuck/claude-apcc`, then `/plugin install apcc@apcc` (one step on a recent Claude Code version: `/plugin install apcc --marketplace 9thDuck/claude-apcc`). The script installer stays as the fallback for managed or older CLIs.
 - `hooks/hooks.json` wires the six handlers in exec form (`command` + `args`, `${CLAUDE_PLUGIN_ROOT}`), with no shell and no matchers. The entry guard now survives plugin paths that contain a space or are reached through a symlink.
 - The persist skill ships at `skills/persisting-context/SKILL.md`; it loads as `apcc:persisting-context` under the plugin and as `persisting-context` under the script install, and the hook names it by mode.
 - The plugin stands down when a script install is present (one startup message), and the installer refuses when the plugin is installed unless `--force`; the two would otherwise fire every handler twice.

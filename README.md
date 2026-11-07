@@ -17,7 +17,7 @@ In Claude Code:
 /plugin install apcc@apcc
 ```
 
-Or in one step on Claude Code 2.1.275 or later (the validator's own suggestion):
+Or in one step on a recent Claude Code version:
 
 ```text
 /plugin install apcc --marketplace 9thDuck/claude-apcc

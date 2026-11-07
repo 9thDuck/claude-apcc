@@ -1,6 +1,6 @@
 > Historical record at commit 7f31302; most findings below were fixed later; some were accepted, see README Honest limits.
 
-33 claims probed / 30 holding / 3 failing
+Most claims held; three failed (see below)
 
 Repo `claude-apcc` @ 7f31302, Node v24.20.0, Linux. Every claim was exercised by launching the real
 `node hooks/apcc.mjs <event>` as a separate process with JSON on stdin and an isolated HOME,
