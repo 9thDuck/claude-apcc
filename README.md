@@ -6,6 +6,10 @@ One file (`hooks/apcc.mjs`). Ships as a Claude Code **plugin** and as a **script
 
 Use at your own risk and judgement; the author is not liable for any loss or damage ([details](#use-at-your-own-risk)).
 
+## Why compact early
+
+Every turn re-sends the whole context, so a session's cost per turn grows with how full the window is, and models tend to follow a very long context less well. Compacting at a lower point (the script installer defaults `autoCompactWindow` to 180000, and apcc nudges before that) keeps each turn cheaper than letting a 1M-token window fill. The catch is that a compaction summary drops detail and instructions, so compacting often is only safe if state is saved first. That is what apcc does. I have not measured the saving; it depends on your model, caching and workload.
+
 ## Prerequisites
 
 - Node 18 or newer on your PATH. Without it the hooks fail and apcc does nothing.
