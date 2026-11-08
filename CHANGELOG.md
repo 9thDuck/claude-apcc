@@ -1,14 +1,11 @@
 # Changelog
 
-## Unreleased
-
-- Projects without `.beads/` or `.opencode/context/` no longer get the late "set up .opencode/context and persist" nudge. They get the startup line and the verbatim copy of your messages only; apcc never asks the model to create anything.
-
 The public repository starts at 0.2.1. Entries below it describe earlier, unpublished history.
 
 ## Unreleased
 
 - The script installer now refuses to install when `bd` (beads) is not on PATH and changes nothing; `--force` overrides, `--uninstall` and `--help` are unaffected. The plugin install cannot check prerequisites, so the README lists them.
+- Projects without `.beads/` or `.opencode/context/` no longer get the late "set up .opencode/context and persist" nudge. They get the startup line and the verbatim copy of your messages only; apcc never asks the model to create anything.
 
 ## 0.2.1 (2026-11-07)
 
