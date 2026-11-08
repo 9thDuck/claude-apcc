@@ -6,9 +6,9 @@ One file (`hooks/apcc.mjs`). Ships as a Claude Code **plugin** and as a **script
 
 Use at your own risk and judgement; the author is not liable for any loss or damage ([details](#use-at-your-own-risk)).
 
-## Why compact early
+## Why it exists
 
-Every turn re-sends the whole context, so a session's cost per turn grows with how full the window is, and models tend to follow a very long context less well. Compacting at a lower point (the script installer defaults `autoCompactWindow` to 180000, and apcc nudges before that) keeps each turn cheaper than letting a 1M-token window fill. The catch is that a compaction summary drops detail and instructions, so compacting often is only safe if state is saved first. That is what apcc does. I have not measured the saving; it depends on your model, caching and workload.
+apcc ties persistence to a lower context level. The host's own compaction fires late, near the window limit, when the summary has the least room to keep the exact next step, decisions and gotchas, and asking the model to "please save first" at that point has nothing checking the answer. So apcc picks an earlier point (the script installer sets `autoCompactWindow` to 180000 if you have none) and makes saving happen before it: a nudge as context nears the line, a gate that holds back other work until the save is done, and a restore afterwards. Compacting early also keeps each turn's context smaller; I have not measured any cost saving from that.
 
 ## Prerequisites
 
