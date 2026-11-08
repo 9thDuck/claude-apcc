@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The startup line for projects with no `.beads/` or `.opencode/context/` now says to run `bd init` first, with `mkdir -p .opencode/context` as the fallback for people not using beads.
 - Projects without `.beads/` or `.opencode/context/` no longer get the late "set up .opencode/context and persist" nudge. They get the startup line and the verbatim copy of your messages only; apcc never asks the model to create anything.
 
 The public repository starts at 0.2.1. Entries below it describe earlier, unpublished history.
