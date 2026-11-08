@@ -84,11 +84,12 @@ For a script install: `node scripts/install.mjs --uninstall` (add `--project` fo
 
 ## Honest limits
 
-- The persist step is an instruction to the model, and a model can ignore it. In a live Haiku trial it did, and apcc then reported "not done" after compaction and pointed to the recovery steps. The gate and the recovery contract make ignoring it costly and recoverable, not impossible.
+- The persist step is an instruction to the model, and a model can ignore it. In two earlier Haiku trials it did; in the latest one (seven compactions) it followed every nudge. Expect that to vary by model. When it is ignored, apcc reports "not done" after compaction and points to the recovery steps. The gate and the recovery contract make ignoring it costly and recoverable, not impossible.
+- It only acts fully in a project with `.beads/` (or the `.opencode/context/` fallback). In any other folder you get one startup line and a copy of your own messages, nothing more.
+- Prerequisites are not enforced by the plugin: Claude Code has no install-time check. Without `bd` apcc falls back to plain files; without `node` the hooks error and apcc does nothing. The script installer refuses without `bd` (override with `--force`).
 - The gate matches command text. It stops accidents, not a determined attacker, and is not a sandbox.
-- It only acts fully in a project with `.beads/` (or the `.opencode/context/` fallback).
 - Exec-form plugin hooks need a recent Claude Code, and organisations that set `allowManagedHooksOnly` may block them; the script install covers both.
-- Developed and tested on Linux with synthetic hook payloads and a few short live Haiku sessions; not yet checked against every Claude Code release.
+- Tested on Linux only: synthetic hook payloads, CI on Node 18/20/22, and a few short live Haiku sessions. Not checked on macOS or Windows, or against every Claude Code release.
 
 The full list is in [docs/reference.md](docs/reference.md#honest-limits). The independent verification passes are in [docs/verification/](docs/verification/). To check it yourself, run `npm test` and `node scripts/verify.mjs`.
 
