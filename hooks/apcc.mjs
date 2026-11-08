@@ -909,7 +909,7 @@ const out = (obj) => process.stdout.write(JSON.stringify(obj))
 // written into the project and the model is never asked to create anything. The user's words are the exception that costs nothing:
 // they are captured at PreCompact and pointed to on restore, in the state dir. APCC_CC_UNTRACKED=0 restores total silence.
 export const UNTRACKED_HINT =
-  "apcc: this project has no .opencode/context/ or .beads/, so no work state is saved before compaction and the gate is off. Your own messages are still copied verbatim at compaction (to apcc's state dir, not the project) and pointed to afterwards. Run `mkdir -p .opencode/context` to switch full persistence on."
+  "apcc: this project has no .opencode/context/ or .beads/, so no work state is saved before compaction and the gate is off. Your own messages are still copied verbatim at compaction (to apcc's state dir, not the project) and pointed to afterwards. Run `bd init` here to switch full persistence on (beads is apcc's prerequisite), or `mkdir -p .opencode/context` if you do not use beads."
 // Save the user's words verbatim before the summary replaces them. They go to the state dir, not the project.
 function saveUserWords(input, proj, env) {
   try {

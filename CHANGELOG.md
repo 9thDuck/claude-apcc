@@ -4,6 +4,7 @@ The public repository starts at 0.2.1. Entries below it describe earlier, unpubl
 
 ## Unreleased
 
+- The startup line for projects with no `.beads/` or `.opencode/context/` now says to run `bd init` first, with `mkdir -p .opencode/context` as the fallback for people not using beads.
 - The script installer now refuses to install when `bd` (beads) is not on PATH and changes nothing; `--force` overrides, `--uninstall` and `--help` are unaffected. The plugin install cannot check prerequisites, so the README lists them.
 - Projects without `.beads/` or `.opencode/context/` no longer get the late "set up .opencode/context and persist" nudge. They get the startup line and the verbatim copy of your messages only; apcc never asks the model to create anything.
 
