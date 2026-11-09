@@ -6,6 +6,14 @@ One file (`hooks/apcc.mjs`). Ships as a Claude Code **plugin** and as a **script
 
 Use at your own risk and judgement; the author is not liable for any loss or damage ([details](#use-at-your-own-risk)).
 
+## Why it exists
+
+apcc ties persistence to a lower context level. The host's own compaction fires late, near the window limit, when the summary has the least room to keep the exact next step, decisions and gotchas, and asking the model to "please save first" at that point has nothing checking the answer. So apcc picks an earlier point (the script installer sets `autoCompactWindow` to 180000 if you have none) and makes saving happen before it: a nudge as context nears the line, a gate that holds back other work until the save is done, and a restore afterwards.
+
+It is aimed at long-running sessions. A short session never reaches the threshold, so apcc does nothing in it.
+
+**Cost: estimates only.** In the author's own use it seemed to bring spend down. A rough model using Opus 5.5 list prices (a 500k-token task, compaction at 130k, extra beads calls included) suggests the result depends on the session. With the prompt cache always warm and no pauses, it came out more expensive. Once the session paused for over five minutes now and then, so the cache expired and the whole context was billed again, it came out cheaper, and more so for longer runs. Those inputs are assumptions, not measurements, and the model ignores subscription limits. Treat the numbers as a reason to try it, not a promise. Published research also finds that models handle very long contexts less reliably ([RULER](https://arxiv.org/abs/2404.06654), [Chroma](https://www.trychroma.com/research/context-rot)), though nobody has measured whether compacting earlier is better than compacting late.
+
 ## Prerequisites
 
 - Node 18 or newer on your PATH. Without it the hooks fail and apcc does nothing.
